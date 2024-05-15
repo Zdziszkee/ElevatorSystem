@@ -8,7 +8,13 @@ import java.util.*;
 public class DefaultDestinationDispatchScheduler implements DestinationDispatchScheduler {
 
     private final Set<Elevator> elevators = new HashSet<>();
-
+    static int counter = 0;
+    public void step(StringBuilder builder){
+        builder.append("Step ").append(counter).append(": ");
+        getElevators().forEach(elevator -> elevator.step(builder));
+        builder.append("\n");
+        counter++;
+    }
     public DefaultDestinationDispatchScheduler(int minFloorInclusive, int maxFloorInclusive, int elevatorsCount) {
         for (int i = 0; i < elevatorsCount; i++) {
             elevators.add(new Elevator(i));
@@ -16,28 +22,30 @@ public class DefaultDestinationDispatchScheduler implements DestinationDispatchS
     }
 
     public final void schedule(int sourceFloor, int destinationFloor) {
-        Optional<Elevator> bestElevator = elevators.stream().min((first, second) -> Integer.compare(calculateCost(first, sourceFloor, destinationFloor), calculateCost(second, sourceFloor, destinationFloor)));
-        bestElevator.ifPresent(elevator -> elevator.addDestination(destinationFloor));
+        final Optional<Elevator> bestElevator = elevators.stream().min((first, second) -> Integer.compare(calculateCost(first, sourceFloor, destinationFloor), calculateCost(second, sourceFloor, destinationFloor)));
+        final Elevator elevator = bestElevator.orElseThrow(() -> new IllegalStateException("No elevator found"));
+        elevator.addDestination(sourceFloor);
+        elevator.addDestination(destinationFloor);
     }
 
-    private int calculateCost(Elevator elevator, int sourceFloor, int destinationFloor) {
+    private int calculateCost(final Elevator elevator, final int sourceFloor, final int destinationFloor) {
         final int currentFloor = elevator.getCurrentFloor();
         final TreeSet<Integer> destinations = elevator.getDestinations();
+        if (destinations.isEmpty()) {
+            return 0;
+        }
+
         //criteria #1
-        int elevatorDistanceFromSourceFloor = Math.abs(currentFloor - sourceFloor);
+        final int elevatorDistanceFromSourceFloor = Math.abs(currentFloor - sourceFloor);
         //criteria #2
-        int elevatorDestinationsDistance = Math.abs(destinations.last() - destinationFloor);
+        final int elevatorDistanceFromDestinationFloor = Math.abs(currentFloor - destinationFloor);
         //criteria #3
-        return elevatorDestinationsDistance + elevatorDistanceFromSourceFloor;
+        return elevatorDistanceFromDestinationFloor + elevatorDistanceFromSourceFloor;
     }
 
     @Override
     public Set<Elevator> getElevators() {
-        return new HashSet<>(elevators);
+        return Collections.unmodifiableSet(elevators);
     }
 
-    @Override
-    public void step() {
-
-    }
 }

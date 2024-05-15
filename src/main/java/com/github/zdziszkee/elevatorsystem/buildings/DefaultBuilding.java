@@ -1,6 +1,7 @@
 package com.github.zdziszkee.elevatorsystem.buildings;
 
 import com.github.zdziszkee.elevatorsystem.api.Building;
+import com.github.zdziszkee.elevatorsystem.api.DestinationDispatchScheduler;
 import com.github.zdziszkee.elevatorsystem.api.ElevatorScheduler;
 
 public class DefaultBuilding implements Building {
@@ -8,9 +9,9 @@ public class DefaultBuilding implements Building {
     private final int maximumFloor;
     private final int numberOfElevators;
 
-    private final ElevatorScheduler scheduler;
+    private final DestinationDispatchScheduler scheduler;
 
-    public DefaultBuilding(int minimumFloor, int maximumFloor, int numberOfElevators, ElevatorScheduler scheduler) {
+    public DefaultBuilding(int minimumFloor, int maximumFloor, int numberOfElevators, DestinationDispatchScheduler scheduler) {
         this.minimumFloor = minimumFloor;
         this.maximumFloor = maximumFloor;
         this.numberOfElevators = numberOfElevators;
@@ -34,7 +35,7 @@ public class DefaultBuilding implements Building {
     }
 
     @Override
-    public ElevatorScheduler getElevatorScheduler() {
+    public DestinationDispatchScheduler getElevatorScheduler() {
         return scheduler;
     }
 }
