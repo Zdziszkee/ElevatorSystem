@@ -5,7 +5,7 @@ public enum Direction {
     DOWN,
     NONE;
 
-    static Direction getDirection(int source, int destination) {
+    public static Direction getDirection(int source, int destination) {
         if(source == destination) return NONE;
         if(source < destination) return UP;
         return DOWN;
